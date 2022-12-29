@@ -21,29 +21,6 @@ const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(100));
 //Lights
 
-//Testar att git funkar
-
-const light_width = 10;
-const light_height = 10;
-const intensity = 1;
-const rectLight1 = new THREE.PointLight( 0xffffff, intensity);
-rectLight1.position.set( 50, 50, 5 );
-rectLight1.lookAt( 0, 0, 0 );
-
-const rectLight2 = new THREE.PointLight( 0xffffff, intensity);
-rectLight2.position.set( -50, 50, 50 );
-rectLight2.lookAt( 0, 0, 0 );
-
-const rectLight3 = new THREE.PointLight( 0xffffff, intensity);
-rectLight3.position.set( -5, -250, -5 );
-rectLight3.lookAt( 0, 0, 0 );
-
-const pointlight1 = new THREE.PointLight(0xffffff, 25)
-pointlight1.position.set(0,-25, 0)
-scene.add( rectLight1, rectLight2, rectLight3, pointlight1 )
-
-
-
 
 /**
  * Loaders
@@ -52,17 +29,16 @@ scene.add( rectLight1, rectLight2, rectLight3, pointlight1 )
 const stlLoader = new STLLoader()
 const material = new THREE.MeshNormalMaterial()
 
-
-
 //LOAD 20MM
 stlLoader.load(
     '/STL/20mm/a20mm.stl',
     function (geometry) {
-        const mesh = new THREE.Mesh(geometry.center(), material)
-		mesh.rotation.z = -Math.PI/2
-        scene.add(mesh)
+        const a_20_mesh = new THREE.Mesh(geometry.center(), material)
+		a_20_mesh.rotation.z = -Math.PI/2
+		a_20_mesh.visible = false
+        scene.add(a_20_mesh)
 
-		console.log(mesh)
+		console.log(a_20_mesh)
     },
     (xhr) => {
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -70,18 +46,19 @@ stlLoader.load(
     (error) => {
         console.log(error)
     }
+	
 )
 
 stlLoader.load(
     '/STL/20mm/b20mm.stl',
     function (geometry) {
-        const mesh = new THREE.Mesh(geometry.center(), material)
-		mesh.position.set(0,50,0)
-		mesh.rotation.z = -Math.PI/2
+        const b_20_mesh = new THREE.Mesh(geometry.center(), material)
+		b_20_mesh.position.set(0,0,150)
+		b_20_mesh.rotation.z = -Math.PI/2
+		b_20_mesh.visible = false
 
-        scene.add(mesh)
+        scene.add(b_20_mesh)
 
-		console.log(mesh)
     },
     (xhr) => {
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -91,23 +68,65 @@ stlLoader.load(
     }
 )
 
+const feet = []
+const feet_location = []
+
+const a = new THREE.Vector2(0,0)
+feet_location.push(a)
+
+const b = new THREE.Vector2(0,100)
+feet_location.push(b)
+
+const c = new THREE.Vector2(100,100)
+feet_location.push(c)
+
+const d = new THREE.Vector2(100,0)
+feet_location.push(d)
+
+
+
+
+
+
+function place_foot (x, y, z, id){
+	const object = scene.getObjectById(id)
+	console.log(object)
+	object.visible = true
+	//const mesh = object.clone()
+	object.position.set(x, y, z)
+	scene.add(object)
+}
 stlLoader.load(
     '/STL/20mm/foot20mm.stl',
-    function (geometry) {
-        const mesh = new THREE.Mesh(geometry.center(), material)
-		mesh.position.set(0, 100, 0)
-		mesh.rotation.z = -Math.PI/2
-        scene.add(mesh)
-
-		console.log(mesh)
+     function (geometry) {
+        const foot_20_mesh = new THREE.Mesh(geometry.center(), material)
+		foot_20_mesh.position.set(0, 0, 0)
+		foot_20_mesh.rotation.x = -Math.PI/2
+		feet.push(foot_20_mesh.uuid)
+		foot_20_mesh.visible = false
+        scene.add(foot_20_mesh)
+		
     },
     (xhr) => {
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+		
     },
     (error) => {
         console.log(error)
     }
+	
 )
+stlLoader.onLoad(
+	()=>{
+		console.log("laddat")
+
+	}
+)
+
+
+for(let i = 0; 0<feet_location.length; i++){
+	place_foot(feet_location[0].x, feet_location[0].y, 0, feet[0]);
+}
 
 
 
