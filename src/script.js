@@ -29,8 +29,12 @@ const parameters = {
 	height: 1000,
     diameter: 20,
     shelf_height1: 100,
-    thickness: 10
+    thickness: 10,
+    bottom_height: 100,
+    top_height: 1000 - 100,
+    number_of_shelves: 3
 }
+parameters.top_height = parameters.height - 100
 
 //Corners
 let corners = []
@@ -51,15 +55,40 @@ generate_corners()
  * Loaders
 */
 const gltf_loader = new GLTFLoader()
-const material = new THREE.MeshNormalMaterial()
+const material = new THREE.MeshStandardMaterial()
 material.wireframe = false
+const material_connectors = new THREE.MeshStandardMaterial()
+material_connectors.color.set("red")
+const material_rod = new THREE.MeshStandardMaterial()
+material_rod.color.set("blue")
+
+/**
+ * Lights
+ */
+
+const intensity = 0.5;
+const rectLight1 = new THREE.PointLight( 0xffffff, intensity);
+rectLight1.position.set( 500, 2000, 50 );
+rectLight1.lookAt( 0, 0, 0 );
+
+const rectLight2 = new THREE.PointLight( 0xffffff, intensity);
+rectLight2.position.set( -500, 2000, 50 );
+rectLight2.lookAt( 0, 0, 0 );
+
+const rectLight3 = new THREE.PointLight( 0xffffff, intensity);
+rectLight3.position.set( -500, 2000, -50 );
+rectLight3.lookAt( 0, 0, 0 );
+
+const pointlight1 = new THREE.PointLight(0xffffff, 1)
+pointlight1.position.set(0, 2000, 0)
+scene.add( rectLight1, rectLight2, rectLight3, pointlight1 )
 
 
 function place_foot (x, y, z, id){
     const object = scene.getObjectById(id)
 	const geo = object.geometry.clone()
     geo.center()
-    const mesh = new THREE.Mesh(geo, material)
+    const mesh = new THREE.Mesh(geo, material_connectors)
     mesh.position.set(x, y, z)
     mesh.visible=true
     meshes.push(mesh.id)
@@ -68,7 +97,7 @@ function place_foot (x, y, z, id){
 
 function place_legs(x, y, z, diameter, height){
     const leg_geo = new THREE.CylinderGeometry(diameter/2, diameter/2, height, 32)
-    const leg_mesh = new THREE.Mesh(leg_geo, material)
+    const leg_mesh = new THREE.Mesh(leg_geo, material_rod)
     leg_mesh.position.set(x,y,z)
     meshes.push (leg_mesh.id)
     scene.add(leg_mesh)
@@ -76,7 +105,7 @@ function place_legs(x, y, z, diameter, height){
 
 function place_x_rods(x, y, z, diameter, depth){
     const leg_geo = new THREE.CylinderGeometry(diameter/2, diameter/2, depth, 32)
-    const leg_mesh = new THREE.Mesh(leg_geo, material)
+    const leg_mesh = new THREE.Mesh(leg_geo, material_rod)
     leg_mesh.position.set(x,y,z)
     leg_mesh.rotateZ(Math.PI/2)
     meshes.push (leg_mesh.id)
@@ -85,7 +114,7 @@ function place_x_rods(x, y, z, diameter, depth){
 
 function place_z_rods(x, y, z, diameter, width){
     const leg_geo = new THREE.CylinderGeometry(diameter/2, diameter/2, width, 32)
-    const leg_mesh = new THREE.Mesh(leg_geo, material)
+    const leg_mesh = new THREE.Mesh(leg_geo, material_rod)
     leg_mesh.position.set(x,y,z)
     leg_mesh.rotateX(Math.PI/2)
     meshes.push (leg_mesh.id)
@@ -100,6 +129,15 @@ function place_shelf(x, y, z, thickness, width, depth){
     scene.add(shelf_mesh)
 }
 
+function add_floor(){
+    const shelf_geo = new THREE.PlaneGeometry(2500,2500)
+    const shelf_mesh = new THREE.Mesh(shelf_geo, material)
+    shelf_mesh.rotateX(-Math.PI/2)
+    shelf_mesh.position.set(0,-5,0)
+    //meshes.push (shelf_mesh.id)
+    scene.add(shelf_mesh)
+}
+add_floor()
 function add_connectors(height)
     {
     //B
@@ -107,7 +145,7 @@ function add_connectors(height)
         '/gltf/B20mm.gltf',
         function ( gltf ) {
             const b_20_geometry = gltf.scene.children[0].geometry.clone()
-            const b_20_mesh = new THREE.Mesh(b_20_geometry, material)
+            const b_20_mesh = new THREE.Mesh(b_20_geometry, material_connectors)
             b_20_mesh.visible = false
             scene.add(b_20_mesh)
             b20mm.push(b_20_mesh.id)
@@ -129,7 +167,7 @@ function add_connectors(height)
         function ( gltf ) 
         {
             const a_20_geometry = gltf.scene.children[0].geometry.clone()
-            const a_20_mesh = new THREE.Mesh(a_20_geometry, material)
+            const a_20_mesh = new THREE.Mesh(a_20_geometry, material_connectors)
 		    a_20_mesh.visible = false
             a20mm.push(a_20_mesh.id)
             scene.add(a_20_mesh)
@@ -174,26 +212,26 @@ function build_base(){
         
     )
 
-    place_x_rods(parameters.depth/2, parameters.height - parameters.shelf_height, 0, parameters.diameter, parameters.depth-30)
-    place_x_rods(parameters.depth/2, parameters.height - parameters.shelf_height, parameters.width, parameters.diameter, parameters.depth-30)
+    place_x_rods(parameters.depth/2, parameters.bottom_height, 0, parameters.diameter, parameters.depth-30)
+    place_x_rods(parameters.depth/2, parameters.bottom_height, parameters.width, parameters.diameter, parameters.depth-30)
 
-    place_z_rods(0, parameters.height - parameters.shelf_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
-    place_z_rods(parameters.depth , parameters.height - parameters.shelf_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
+    place_z_rods(0, parameters.bottom_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
+    place_z_rods(parameters.depth , parameters.bottom_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
 
-    add_connectors(parameters.shelf_height)
+    add_connectors(parameters.bottom_height)
 
-    place_shelf(parameters.depth/2, parameters.shelf_height + 17 ,parameters.width/2, parameters.thickness, parameters.width, parameters.depth)
+    place_shelf(parameters.depth/2, parameters.bottom_height + 17 ,parameters.width/2, parameters.thickness, parameters.width, parameters.depth)
     
     //Top
-    place_x_rods(parameters.depth/2, parameters.shelf_height, 0, parameters.diameter, parameters.depth-30)
-    place_x_rods(parameters.depth/2, parameters.shelf_height, parameters.width, parameters.diameter, parameters.depth-30)
+    place_x_rods(parameters.depth/2, parameters.top_height, 0, parameters.diameter, parameters.depth-30)
+    place_x_rods(parameters.depth/2, parameters.top_height, parameters.width, parameters.diameter, parameters.depth-30)
     
-    place_z_rods(0,parameters.shelf_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
-    place_z_rods(parameters.depth ,parameters.shelf_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
+    place_z_rods(0,parameters.top_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
+    place_z_rods(parameters.depth ,parameters.top_height + 20, parameters.width/2, parameters.diameter, parameters.width-30)
 
-    add_connectors(parameters.height - parameters.shelf_height)
+    add_connectors(parameters.top_height)
 
-    place_shelf(parameters.depth/2, parameters.height - parameters.shelf_height + 17 ,parameters.width/2, parameters.thickness, parameters.width, parameters.depth)
+    place_shelf(parameters.depth/2, parameters.top_height + 17 ,parameters.width/2, parameters.thickness, parameters.width, parameters.depth)
 
 }
 
@@ -222,7 +260,7 @@ function place_a (x, y, z, id, index){
     else{
         geo.rotateY(Math.PI)
     }
-    const mesh = new THREE.Mesh(geo, material)
+    const mesh = new THREE.Mesh(geo, material_connectors)
     if (index % 2 == 0){
         mesh.position.set(x+7.5, y, z)
     }
@@ -246,7 +284,7 @@ function place_b (x, y, z, id, index){
     else{
         geo.rotateY(Math.PI)
     }
-    const mesh = new THREE.Mesh(geo, material)
+    const mesh = new THREE.Mesh(geo, material_connectors)
     if (index % 2 == 0){
         mesh.position.set(x, y, z)
     }
@@ -272,6 +310,7 @@ function shelfdelete() {
 /**
  * UI
  */
+let shelf_height = 0
 const gui = new dat.GUI({
     name: 'Shelf Configurator',
     width: 400
@@ -281,8 +320,15 @@ gui
 	.onFinishChange(() =>
 		{
 			shelfdelete()
-            generate_corners()
-            build_base()
+        parameters.bottom_height = 100
+        parameters.top_height = parameters.height - 100
+        shelf_height = (parameters.height - 200)/(parameters.number_of_shelves-1)
+        generate_corners()
+        for(let i = 0; i < parameters.number_of_shelves-1; i++) {
+            add_shelf(shelf_height*i + 100)
+
+        }
+        build_base()
 		})
 
 gui
@@ -290,17 +336,46 @@ gui
 	.onFinishChange(() =>
 		{
             shelfdelete()
-            generate_corners()
-            build_base()
+        parameters.bottom_height = 100
+        parameters.top_height = parameters.height - 100
+        shelf_height = (parameters.height - 200)/(parameters.number_of_shelves-1)
+        generate_corners()
+        for(let i = 0; i < parameters.number_of_shelves-1; i++) {
+            add_shelf(shelf_height*i + 100)
+
+        }
+        build_base()
 		})
 gui
 	.add(parameters, 'width', 100, 1000, 1)
 	.onFinishChange(()=>
     {
-            shelfdelete()
-            generate_corners()
-            build_base()
+        shelfdelete()
+        parameters.bottom_height = 100
+        parameters.top_height = parameters.height - 100
+        shelf_height = (parameters.height - 200)/(parameters.number_of_shelves-1)
+        generate_corners()
+        for(let i = 0; i < parameters.number_of_shelves-1; i++) {
+            add_shelf(shelf_height*i + 100)
+
+        }
+        build_base()
 	})
+    gui
+	.add(parameters, 'number_of_shelves', 2, 10, 1)
+	.onFinishChange(()=>
+    {
+        shelfdelete()
+        parameters.bottom_height = 100
+        parameters.top_height = parameters.height - 100
+        shelf_height = (parameters.height - 200)/(parameters.number_of_shelves-1)
+        generate_corners()
+        for(let i = 0; i < parameters.number_of_shelves-1; i++) {
+            add_shelf(shelf_height*i + 100)
+
+        }
+        build_base()
+    })
 
 
 /**
