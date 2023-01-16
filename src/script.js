@@ -3,6 +3,7 @@ import * as dat from 'lil-gui'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import Experience from './Experience/Experience'
 
 
 /**
@@ -10,8 +11,13 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
  */
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+//const canvas = document.querySelector('canvas.webgl')
 
+
+const experience = new Experience(document.querySelector('canvas.webgl'))
+//console.log(experience)
+/**
+ * 
 // Scene
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(100));
@@ -50,10 +56,11 @@ function generate_corners()
     corners.push(a4)
 }
 generate_corners()
+ */
 
 /**
  * Loaders
-*/
+
 const gltf_loader = new GLTFLoader()
 const material = new THREE.MeshStandardMaterial()
 material.wireframe = false
@@ -61,10 +68,9 @@ const material_connectors = new THREE.MeshStandardMaterial()
 material_connectors.color.set("red")
 const material_rod = new THREE.MeshStandardMaterial()
 material_rod.color.set("blue")
-
+*/
 /**
  * Lights
- */
 
 const intensity = 0.5;
 const rectLight1 = new THREE.PointLight( 0xffffff, intensity);
@@ -306,10 +312,10 @@ function shelfdelete() {
 	meshes = []
     corners = []
 };
+ */
 
 /**
  * UI
- */
 let shelf_height = 0
 const gui = new dat.GUI({
     name: 'Shelf Configurator',
@@ -376,11 +382,11 @@ gui
         }
         build_base()
     })
+ */
 
 
 /**
  * Sizes
- */
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
@@ -400,20 +406,21 @@ window.addEventListener('resize', () =>
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+ */
 
 /**
  * Camera
- */
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 10000)
 camera.position.x = 1000
 camera.position.y = 1000
 camera.position.z = 1000
 scene.add(camera)
+ */
 
 /**
  * Renderer
- */
+ 
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true
@@ -421,18 +428,18 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.outputEncoding = THREE.sRGBEncoding
+*/
 /**
  * Controls
- */
 // Orbit Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true
+ */
 
 
 
 /**
  * Animate
- */
 const clock = new THREE.Clock()
 
 const tick = () =>
@@ -450,3 +457,4 @@ const tick = () =>
 }
 
 tick()
+ */
