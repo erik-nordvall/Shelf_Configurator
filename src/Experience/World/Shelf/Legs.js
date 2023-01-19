@@ -8,6 +8,8 @@ export default class Legs
         this.experience = new Experience()
         this.scene = this.experience.scene
         this.resources = this.experience.resources
+        this.meshes = this.experience.meshes
+
         
         this.diameter = diameter*0.1
         this.x = x
@@ -50,6 +52,7 @@ export default class Legs
 
         this.mesh.receiveShadow = true
         this.mesh.castShadow = true
+        this.meshes.push(this.mesh.id)
         this.scene.add(this.mesh)
     }
 

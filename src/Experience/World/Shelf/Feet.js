@@ -8,6 +8,7 @@ export default class Feet
         this.experience = new Experience()
         this.scene = this.experience.scene
         this.resources = this.experience.resources
+        this.meshes = this.experience.meshes
 
         this.diameter = diameter
         this.x = x
@@ -18,6 +19,8 @@ export default class Feet
         this.setTextures()
         this.setMaterial()
         this.setMesh()
+        
+
 
     }
 
@@ -65,8 +68,9 @@ export default class Feet
         
         this.mesh.receiveShadow = true
         this.mesh.castShadow = true
-        console.log(this.mesh)
+        this.meshes.push(this.mesh.id)
         this.scene.add(this.mesh)
     }
+
 
 }

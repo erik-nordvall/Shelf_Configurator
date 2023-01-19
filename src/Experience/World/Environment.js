@@ -11,6 +11,8 @@ export default class Environment
 
         this.setSunLight()
         this.setEnvironmentMap()
+
+        
     }
 
     setSunLight()
@@ -20,7 +22,7 @@ export default class Environment
         this.sunLight.shadow.camera.far = 1000   
         this.sunLight.shadow.mapSize.set(2048*4, 2048*4)
         this.sunLight.shadow.normalBias = 0.05
-        this.sunLight.shadow.radius = 2
+        this.sunLight.shadow.radius = 1
         this.sunLight.position.set(300, 300, 200)
         this.sunLight.lookAt(0,0,0)
         this.sunLight.shadow.camera.top = 2000;

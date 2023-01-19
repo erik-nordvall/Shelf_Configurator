@@ -16,6 +16,7 @@ export default class Bookcase
     {
         this.experience = new Experience()
         this.scene = this.experience.scene
+        this.meshes = this.experience.meshes        
 
         this.height = height
         this.width = width
@@ -24,6 +25,8 @@ export default class Bookcase
 
         this.bottom_spacing = 10
         this.top_spacing = 10
+
+        
 
 
         if(diameter === 20)
@@ -38,16 +41,12 @@ export default class Bookcase
             this.offset = 1
             this.diameter = diameter
             this.connector_offset = 2
-
-
         }
         else
         {
             this.offset = 1.2
             this.diameter = diameter
             this.connector_offset = 2
-
-
         }
 
         this.corners = [
@@ -80,6 +79,13 @@ export default class Bookcase
         ]
         
         this.baseFrame()
+        this.spacing = (this.height - (this.bottom_spacing + this.top_spacing))/(this.shelves -1)
+
+
+        for(let i = 1; i<this.shelves-1; i++)
+        {
+            this.addShelf((this.spacing*i) + this.bottom_spacing)
+        }
     }
 
     addShelf(height)
@@ -179,4 +185,15 @@ export default class Bookcase
 
         }
     }
+    destroy()
+    {
+        this.meshes.map( ( i ) => {
+            const object = this.scene.getObjectByProperty( 'id' ,i );
+            object.geometry.dispose();
+            object.material.dispose();
+            this.scene.remove( object );
+        } );
+        this.experience.meshes = []
+    }
+    
 }
