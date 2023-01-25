@@ -30,18 +30,25 @@ In this class all required loaders are instantiated and all objects in the sourc
 This file contains an array of objects. Each object represents what needs to be loaded and contains; a unique name, the type of file and the file path.
 
 ### World.js ###
+The world listens to the "ready" command sent by the Resource class. This class is where the bookcase is instantiated. It is also where the parameters for the bookcase are set and the GUI is created. 
 
 ### Experience.js ###
+The experience is the entire scene and all that is contained within it. The world (i.e all geometries and materials), lights, camera and renderer etc. This needs to be created in the script.js file.
 
 ### Bookcase Components folder ###
 All components follow a similar structure for how the class is defined. Each class contains four functions that are called in the constructor. These four functions are; ``` setGeometry() ```, ``` setTextures() ```, ``` setMaterial() ``` and ``` setMesh() ```. 
 #### ConnectorA.js ####
+Loaded STL geometry for 3D printed connectors. The required inputs are the x, y, z coordinates, flip and diameter. The flip parameter is used to mirror the instantiated part. The diameter input it used 
 #### ConnectorB.js ####
+Loaded STL geometry for 3D printed connectors. The required inputs are the x, y, z coordinates, flip and diameter. The flip parameter is used to mirror the instantiated part.
 #### Feet.js ####
-Native three.js cyliner geometry. The required inputs are the height, diamter and x, y, z coordinates for a individual leg.
+Loaded STL geometry for 3D printed feet. The required inputs are the x, y, z coordinates and diameter. 
 #### Legs.js ####
+Native three.js cylinder geometry. The required inputs are the height, diamter and x, y, z coordinates for a individual leg.
 #### RodA.js ####
+Native three.js cylinder geometry. The required inputs are the height, diamter and x, y, z coordinates for a individual leg.
 #### RodBjs ####
+Native three.js cylinder geometry. The required inputs are the height, diamter and x, y, z coordinates for a individual leg.
 #### Shelf.js ####
 
 ## Create your own ##
