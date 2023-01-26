@@ -53,3 +53,8 @@ Native three.js cylinder geometry. The required inputs are the height, diamter a
 
 ## Create your own ##
 Below is a brief description of what needs to be changed in order to create your own configurator.
+
+## Future Developments ##
+Three.js TransformControls
+
+https://bruno-simon.com/
